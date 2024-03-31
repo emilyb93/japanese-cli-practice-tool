@@ -1,11 +1,18 @@
 import hiraganaExercises from "../data/hiragana.json";
-import {Exercise} from "../main.ts"
+import katakanaExercises from "../data/katakana.json";
+import { Exercise } from "../main.ts";
 
-function fetchHiraganaExercises() {
+const charSetMap = {
+  Katakana: katakanaExercises,
+  Hiragana: hiraganaExercises,
+};
+
+function fetchExercises(charSet) {
   const randomIndexes: number[] = [];
+  const charSetExercises = charSetMap[charSet];
   for (let i = 0; i < 10; i++) {
     const randomIndex: number = Math.floor(
-      Math.random() * hiraganaExercises.length
+      Math.random() * charSetExercises.length
     );
     if (randomIndexes.includes(randomIndex)) {
       i--;
@@ -13,8 +20,23 @@ function fetchHiraganaExercises() {
       randomIndexes.push(randomIndex);
     }
   }
-  console.log({randomIndexes})
-  return randomIndexes.map((index) => new Exercise(hiraganaExercises[index]));
+  console.log({ randomIndexes });
+  return randomIndexes.map((index) => new Exercise(charSetExercises[index]));
 }
+// function fetchHiraganaExercises() {
+//   const randomIndexes: number[] = [];
+//   for (let i = 0; i < 10; i++) {
+//     const randomIndex: number = Math.floor(
+//       Math.random() * hiraganaExercises.length
+//     );
+//     if (randomIndexes.includes(randomIndex)) {
+//       i--;
+//     } else {
+//       randomIndexes.push(randomIndex);
+//     }
+//   }
+//   console.log({ randomIndexes });
+//   return randomIndexes.map((index) => new Exercise(hiraganaExercises[index]));
+// }
 
-export {fetchHiraganaExercises}
+export { fetchExercises };
