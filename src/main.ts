@@ -1,6 +1,7 @@
 import { askForUserInput, askUserForLessonType } from "./utils/utils.ts";
-import { fetchExercises } from "./utils/fetchExercises.ts";
-
+import { fetchExercises, fetchKanjiExercises } from "./utils/fetchExercises.ts";
+import inquirer from "inquirer";
+import Revision from "./revision.ts";
 class Game {
   lesson: Lesson;
 
@@ -12,6 +13,7 @@ class Game {
       const trackMap = {
         Hiragana: HiraganaLesson,
         Katakana: KatakanaLesson,
+        Kanji: KanjiLesson,
       };
       const track = trackMap[answer];
       this.lesson = new track();
@@ -57,18 +59,51 @@ class KatakanaLesson extends Lesson {
     this.exercises = fetchExercises("Katakana");
   }
 }
+
+class KanjiLesson extends Lesson {
+  constructor() {
+    super();
+    this.exercises = fetchKanjiExercises();
+  }
+}
 type ExerciseObj = { character: string; translation: string };
 
 class Exercise {
   character: string;
   translation: string;
-  constructor(exerciseObj: ExerciseObj) {
+  charSet: string;
+  revisionSet: Revision;
+  constructor(exerciseObj: ExerciseObj, charSet: string) {
     this.character = exerciseObj.character;
     this.translation = exerciseObj.translation;
+    this.charSet = charSet;
+    this.revisionSet = new Revision();
   }
 
   start() {
-    return askForUserInput(this.character).then(({ answer }) => {
+    return askForUserInput(this.character, this.charSet).then(({ answer }) => {
+      if (answer === this.translation) {
+        console.log("Correct");
+        return true;
+      } else {
+        this.revisionSet.add({
+          character: this.character,
+          translation: this.translation,
+        });
+        console.log("Incorrect: The answer was " + this.translation);
+        return false;
+      }
+    });
+  }
+}
+
+class KanjiExercise extends Exercise {
+  constructor(exerciseObj: ExerciseObj) {
+    super(exerciseObj, "Kanji");
+  }
+
+  start() {
+    return askForUserInput(this.character, this.charSet).then(({ answer }) => {
       if (answer === this.translation) {
         console.log("Correct");
         return true;
@@ -84,4 +119,4 @@ const game = new Game();
 
 game.startGame();
 
-export { Exercise };
+export { Exercise, KanjiExercise };
