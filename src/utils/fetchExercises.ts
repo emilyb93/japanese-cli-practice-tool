@@ -1,8 +1,8 @@
 import hiraganaExercises from "../data/hiragana.json";
 import katakanaExercises from "../data/katakana.json";
 import kanjiExercises from "../data/kanji.json";
-
-import { Exercise, KanjiExercise } from "../main.ts";
+import Exercise from "../classes/Exercise";
+import KanjiExercise from "../classes/KanjiExercise";
 
 const charSetMap = {
   Katakana: katakanaExercises,
@@ -62,7 +62,7 @@ function fetchKanjiExercises() {
 
         return randomIncorrectIndex;
       }
-    );
+    ) as [number, number, number];
     // console.log({ randomIncorrectIndexes });
     // Push those to an array in the same position, might be better to just rework this into the returned exercise object on a property
 
